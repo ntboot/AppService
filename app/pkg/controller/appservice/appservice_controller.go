@@ -127,7 +127,7 @@ func (r *ReconcileAppService) Reconcile(request reconcile.Request) (reconcile.Re
 		if err := r.client.Create(context.TODO(), service); err != nil {
 			return reconcile.Result{}, err
 		}
-		// 3. 关联 Annotations
+		// 3. 关联 Annotations,这里在起初创建的时候
 
 		data, _ := json.Marshal(instance.Spec)
 		if instance.Annotations != nil {
@@ -143,6 +143,9 @@ func (r *ReconcileAppService) Reconcile(request reconcile.Request) (reconcile.Re
 	}
 
 	oldspec := &appv1.AppServiceSpec{}
+	/*获取oldspec 就是从现有集群中调取现在资源的状态，然后和更新后的appservice资源状态做对比
+	  如果2者不同，则更新
+	*/
 	if err := json.Unmarshal([]byte(instance.Annotations["spec"]), oldspec); err != nil {
 		return reconcile.Result{}, err
 	}
